@@ -1,0 +1,103 @@
+				Step:1 import modules.
+
+import React, { useState, useEffect } from 'react'
+import Table from 'react-bootstrap/Table';
+import {Button} from 'react-bootstrap';
+
+
+				step:2 create States
+
+function Product(){
+  const [data, setData] = useState([ ]);
+
+
+				step:3  Fetch data Function
+  
+const fetchData = () => {
+    return fetch('http://localhost:4050/product/product/')
+      .then((response) => response.json())
+      .then((data) => setData(data))
+  }
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+
+				step:4   Delete methord
+
+
+  function deleteData(product_id){
+    let reqData={
+      method:'DELETE'
+    }
+    fetch(`http://localhost:4050/product/product/${product_id}`,reqData)
+    .then((res)=>{
+      if(res.status===200){
+        console.warn(200);
+        reqData()
+      }
+    })
+    fetchData()
+  }
+  
+
+					step:5 Table Return
+
+  return (
+    
+    <div>
+        <h1 style={{color:"red"}}><u>View_Product</u></h1>
+      <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>product_id</th>
+          <th>product_name</th>
+          <th>qty</th>
+          <th>price</th>
+          <th>c_id</th>
+          <th>Update</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      
+
+			step:6  Use oF map Function
+
+      {
+        data.map((value, index) => {
+          return (
+            <>
+              <tbody>
+
+                <tr key={index}>
+                  <td> {value.product_id}</td>
+                  <td> {value.product_name}</td>
+                  <td> {value.qty}</td>
+                  <td> {value.price}</td>
+                  <td> {value.c_id}</td>
+                  <td><Button variant="primary">Update</Button></td>
+                 
+
+								Step: 7  Delete Button
+
+				 <td><Button onClick={()=>{deleteData(value.product_id)}} variant="danger" >Delete</Button></td>
+                </tr>
+
+              </tbody>
+
+         </>
+          )
+        }
+        )
+    }
+     
+    
+    
+          </Table>
+  
+    </div>
+    
+  )
+}
+
+export default Product;

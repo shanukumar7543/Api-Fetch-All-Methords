@@ -1,0 +1,206 @@
+import React, { useState, useEffect } from 'react'
+import Table from 'react-bootstrap/Table'
+// import { Button } from 'react-bootstrap'
+import { Button, Modal, Row, Col } from 'react-bootstrap';
+
+//step 1
+
+function Product() {
+  const [data, setData] = useState([])
+  // psot update .......................................................
+  const [show, setShow] = useState(false);
+  let [product_id, setProduct_id] = useState('')
+  let [product_name, setProduct_name] = useState('')
+  let [qty, setQty] = useState('')
+  let [price, setPrice] = useState('')
+  let [c_id, setC_id] = useState('')
+
+
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+...................................................................................................................
+  // step 2
+  const fetchData = () => {
+    return fetch('http://localhost:4050/product/product')
+      .then((response) => response.json())
+      .then((data) => setData(data))
+  }
+  useEffect(() =>{
+    fetchData()
+  }, [])
+
+  // patch data   Update........................................................
+
+  function patchData() {
+    let data = { product_id, product_name, qty, price, c_id }
+    let reqData = {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }
+    fetch(`http://localhost:4050/product/product/${product_id}`, reqData).then(
+      (result) => {
+        result.json().then((resp) => {
+          console.warn(resp)
+        })
+      },
+    )
+  }
+....................................................................
+
+  function deleteData(product_id) {
+    let reqData = {
+      method: 'DELETE',
+    }
+    fetch(`http://localhost:4050/product/product/${product_id}`, reqData).then(
+      (res) => {
+        if (res.status === 200) {
+          console.warn(200)
+          reqData()
+        }
+      },
+    )
+    fetchData()
+  }
+
+update/......................................................................
+  
+function submitData(product_id, product_name, qty, price, c_id) {
+    setProduct_id(product_id);
+    setProduct_name(product_name);
+    setQty(qty);
+    setPrice(price);
+    setC_id(c_id);
+
+
+    handleShow()
+  }
+
+  // step 3
+  return (
+    <div>
+      <h1 style={{ color: 'red' }}>
+        <u>View_Product</u>
+      </h1>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>product_id</th>
+            <th>product_name</th>
+            <th>qty</th>
+            <th>price</th>
+            <th>c_id</th>
+            <th>Update</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        {data.map((value, index) => {
+          return (
+            <>
+              <tbody>
+                <tr key={index}>
+                  <td> {value.product_id}</td>
+                  <td> {value.product_name}</td>
+                  <td> {value.qty}</td>
+                  <td> {value.price}</td>
+                  <td> {value.c_id}</td>
+                  <td>
+update.=>      <Button onClick={()=>{handleShow();submitData(value.product_id,value.product_name,value.qty, value.price,value.c_id)}} variant="primary">Update</Button>
+                    
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        deleteData(value.product_id)
+                      }}
+                      variant="danger"
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              </tbody>
+            </>
+          )
+        })}
+      </Table>
+
+
+..................	Update Models...................................................................................................
+
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          {/* <div><h1>Add_offer</h1></div> */}
+          <Row>
+            <Col>
+              <label>Product_id</label>
+              <input
+                className="form-control"
+                placeholder=" "
+                type="text"
+                value={product_id}
+                onChange={(e) => setProduct_id(e.target.value)}
+              />
+
+              <label>Product_name</label>
+              <input
+                className="form-control"
+                placeholder=" "
+                type="text"
+                value={product_name}
+                onChange={(e) => setProduct_name(e.target.value)}
+              />
+
+              <label>Qty</label>
+              <input
+                className="form-control"
+                placeholder=" "
+                type="text"
+                value={qty}
+                onChange={(e) => setQty(e.target.value)}
+              />
+
+              <label>Price</label>
+              <input
+                className="form-control"
+                placeholder=" "
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+
+              <label>C_id</label>
+              <input
+                className="form-control"
+                placeholder=" "
+                type="text"
+                value={c_id}
+                onChange={(e) => setC_id(e.target.value)}
+              />
+
+             
+            </Col>
+          </Row>
+          <br />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={patchData}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  )
+}
+
+export default Product;

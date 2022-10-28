@@ -1,0 +1,75 @@
+import React from 'react'
+import { useState } from 'react';
+import { Row, Col, Container,} from "react-bootstrap";
+
+function Add() {
+    let [product_id, setProduct_id] = useState('');         
+    let [product_name, setProduct_name] = useState('');         
+    let [qty, setQty] = useState('');         
+    let [price, setPrice] = useState('');         
+    let [c_id, setC_id] = useState('');                 
+    
+  
+   
+   
+  function submitData() {
+    // alert("you are clicked")
+    let userdata = {
+        product_id : product_id,
+        product_name : product_name,
+        qty : qty,
+        price : price,
+        c_id : c_id,
+      };
+    let reqData = {
+        method : "POST",
+        headers : {
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify(userdata)
+    }
+    fetch("http://localhost:4050/product/product", reqData)
+        .then(response => console.log(`Data Submitted ${response.status}`))
+}
+  
+
+return (
+  <>
+  <h1 style={{color:"red"}}><u>Add_Product</u></h1>
+  <Container flud="md"style={{backgroundColor:"Black",width:"400px",color:"White",padding:"15px",marginLeft:"560px",marginTop:"50px"}}>
+      <div><h1 style={{fontSize:"25px",color:"White"}}>Add_Product</h1></div>
+      <Row>
+          <Col>
+          <label>Product_id</label>
+              <input className="form-control" placeholder=" " type="text" value={product_id} onChange={(e) => setProduct_id(e.target.value)} />
+             
+              <label>Product_name</label>
+              <input className="form-control" placeholder=" " type="text" value={product_name} onChange={(e) => setProduct_name(e.target.value)} />
+             
+              <label>Qty</label>
+              <input className="form-control" placeholder=" " type="text" value={qty} onChange={(e) => setQty(e.target.value)} />
+             
+              <label>price</label>
+              <input className="form-control" placeholder=" " type="text" value={price} onChange={(e) => setPrice(e.target.value)} />
+             
+              <label>C_id</label>
+              <input className="form-control" placeholder=" " type="text" value={c_id} onChange={(e) => setC_id(e.target.value)} />
+             
+        
+          </Col>
+         
+      </Row><br />
+      <Row>
+          <Col>
+          <button type='submit' style={{padding:'10px',marginRight:'10px',fontSize:"15px"}} onClick={submitData} className="btn btn-primary">Save</button>
+            <button style={{padding:'10px',marginRight:'10px',justifyContent:'space-between',fontSize:"15px"}} className="btn btn-danger" >Cancel</button>
+          </Col>
+      </Row>
+  </Container>
+
+</>
+
+  )
+}
+
+export default Add;
